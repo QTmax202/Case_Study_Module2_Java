@@ -65,7 +65,6 @@ public class SwingAccount extends JFrame{
 
     public static void main(String[] args) {
         swingAccount.setVisible(true);
-        swingManage.refreshHomestayList();
     }
 
     public void logInButton(ActionEvent e){
@@ -89,12 +88,17 @@ public class SwingAccount extends JFrame{
             if (acc.getAdminAccount().equals(textAccountField.getText()) && acc.getAdminPassword().equals(passwordField.getText())){
                 swingManage.setVisible(true);
                 swingAccount.setVisible(false);
+                swingManage.refreshHomestayList();
+                swingManage.refreshCustomerList();
+                swingManage.checkFileHs();
+                swingManage.checkFileCustomer();
                 return true;
             }
         }
         for (Customer customer : customers){
             if (customer.getAccount().equals(textAccountField.getText()) && customer.getPassword().equals(passwordField.getText())){
                 swingCustomer.setVisible(true);
+                swingCustomer.accountCustomer = customer.getAccount();
                 swingAccount.setVisible(false);
                 return true;
             }
@@ -102,6 +106,7 @@ public class SwingAccount extends JFrame{
         for (Homestay homestay : homestays){
             if (homestay.getAccHomestay().equals(textAccountField.getText()) && homestay.getPassHomestay().equals(passwordField.getText())){
                 swingCustomer.setVisible(true);
+//                swingCustomer.accountHomestay = homestay.getAccHomestay();
                 swingAccount.setVisible(false);
                 return true;
             }

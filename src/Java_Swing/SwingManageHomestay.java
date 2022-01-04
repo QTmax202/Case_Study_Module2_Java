@@ -21,4 +21,5 @@ public class SwingManageHomestay {
     private JLabel LabelHs;
     private JTextField textPassHs;
     private JButton xóaThôngTinCủaButton;
+    private String accountHomestay;
 }

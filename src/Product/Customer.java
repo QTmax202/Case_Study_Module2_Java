@@ -78,4 +78,9 @@ public class Customer implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s- %s", name, phoneNumber);
+    }
 }

@@ -26,6 +26,7 @@ public class SwingCustomer extends JFrame{
     private JButton logOutButton;
     private static final SwingAccount swingAccount = new SwingAccount();
     private static final SwingCustomer swingCustomer1 = new SwingCustomer();
+    public String accountCustomer;
 
     SwingCustomer(){
         super("Homestay");
