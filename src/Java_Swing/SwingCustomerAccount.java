@@ -94,12 +94,6 @@ public class SwingCustomerAccount extends JFrame {
         }
     }
 
-    public void checkFile_homeOfCus_Date(){
-        if (fileCusDate.readFile(String.format("file_Data/File%sData",textAccount.getText())) == null) {
-            fileCusDate.writerFile(homeOfCus_Date, String.format("file_Data/File%sData",textAccount.getText()));
-        }
-    }
-
     public void saveButtonClicked(ActionEvent e) {
         checkFileCustomer();
         Customer customer = new Customer(
@@ -125,8 +119,8 @@ public class SwingCustomerAccount extends JFrame {
             } else {
                 boolean check = customers.add(customer);
                 if (check) {
+                    fileCusDate.writerFile(homeOfCus_Date, String.format("file_Data/FileCus%sData",textAccount.getText()));
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
-                    checkFile_homeOfCus_Date();
                     textNew.setText("Tài khoản " + customer.getAccount() + " tạo thành công!");
                 } else {
                     textNew.setText("Tạo tài khoản không thành công!");
@@ -135,4 +129,3 @@ public class SwingCustomerAccount extends JFrame {
         }
     }
 }
-

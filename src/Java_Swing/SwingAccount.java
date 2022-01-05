@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public class SwingAccount extends JFrame{
     private JPanel accountPanel;
-    private JTextField textAccountField;
-    private JPasswordField passwordField;
+    private JTextField textAccount;
+    private JPasswordField textPassword;
     private JButton logInButton;
     private JButton registrationButton;
     private JLabel logLabel;
@@ -70,10 +70,10 @@ public class SwingAccount extends JFrame{
 
     public void logInButton(ActionEvent e){
 
-        boolean checkAccRegex = accountPasswordExample.validate(textAccountField.getText());
-        boolean checkPassRegex = accountPasswordExample.validate(passwordField.getText());
+        boolean checkAccRegex = accountPasswordExample.validate(textAccount.getText());
+        boolean checkPassRegex = accountPasswordExample.validate(textPassword.getText());
 
-        if (textAccountField.getText().equals("") || passwordField.getText().equals("")){
+        if (textAccount.getText().equals("") || textPassword.getText().equals("")){
             logLabel.setText("xin mời đăng nhập!");
         } else {
             if(!checkAccRegex | !checkPassRegex){
@@ -86,28 +86,33 @@ public class SwingAccount extends JFrame{
 
     public boolean logInHomestay(){
         for (AccountAdmin acc : accountAdmins.getListAccountAdmin()){
-            if (acc.getAdminAccount().equals(textAccountField.getText()) && acc.getAdminPassword().equals(passwordField.getText())){
+            if (acc.getAdminAccount().equals(textAccount.getText()) && acc.getAdminPassword().equals(textPassword.getText())){
                 swingManage.setVisible(true);
                 swingAccount.setVisible(false);
-                swingManage.refreshHomestayList();
-                swingManage.refreshCustomerList();
                 swingManage.checkFileHs();
                 swingManage.checkFileCustomer();
+                swingManage.refreshHomestayList();
+                swingManage.refreshCustomerList();
                 return true;
             }
         }
+
         for (Customer customer : customers){
-            if (customer.getAccount().equals(textAccountField.getText()) && customer.getPassword().equals(passwordField.getText())){
+            if (customer.getAccount().equals(textAccount.getText()) && customer.getPassword().equals(textPassword.getText())){
                 swingCustomer.setVisible(true);
-                swingCustomer.accountCustomer = customer.getAccount();
+                SwingCustomer.customer = customer;
+                swingCustomer.checkFileHomes();
+                swingCustomer.startSwing();
+                swingCustomer.refreshHomestayList();
+                swingCustomer.checkFileHomeOfCus_Date();
+                swingCustomer.listHomeOfCus();
                 swingAccount.setVisible(false);
                 return true;
             }
         }
         for (Homestay homestay : homestays){
-            if (homestay.getAccHomestay().equals(textAccountField.getText()) && homestay.getPassHomestay().equals(passwordField.getText())){
+            if (homestay.getAccHomestay().equals(textAccount.getText()) && homestay.getPassHomestay().equals(textPassword.getText())){
                 swingManageHomestay.setVisible(true);
-//                swingCustomer.accountHomestay = homestay.getAccHomestay();
                 swingAccount.setVisible(false);
                 return true;
             }

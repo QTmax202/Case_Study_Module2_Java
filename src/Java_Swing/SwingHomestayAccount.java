@@ -80,7 +80,7 @@ public class SwingHomestayAccount extends JFrame{
                 boolean check = homestays.add(homestay);
                 if (check) {
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                    checkFile_cusOfHomes_Date();
+                    fileHomeDate.writerFile(cusOfHome_Date, String.format("file_Data/FileHomes%sData", textAccHs.getText()));
                     textNew.setText("Homestay " + homestay.getNameHs() + " tạo thành công!");
                 } else {
                     textNew.setText("Tạo Homestay không thành công!");
@@ -94,12 +94,6 @@ public class SwingHomestayAccount extends JFrame{
             homestays = new ArrayList<>();
         } else {
             homestays = Read_Write_file1.readFile(PATH_HOMESTAY);
-        }
-    }
-
-    public void checkFile_cusOfHomes_Date(){
-        if (fileHomeDate.readFile(String.format("file_Data/File%sData", textAccHs.getText())) == null) {
-            fileHomeDate.writerFile(cusOfHome_Date, String.format("file_Data/File%sData", textAccHs.getText()));
         }
     }
 

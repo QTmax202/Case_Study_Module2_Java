@@ -3,7 +3,6 @@ package Java_Swing;
 import Product.*;
 import Read_Write_file.IO_Read_Write_File;
 import Regex.AccountPasswordExample;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -41,6 +40,10 @@ public class SwingManage extends JFrame{
     private JTextField textPassHs;
     private JLabel LabelHs;
     private JLabel LabelCus;
+    private JList<HomestayOfCus_Date> HomeOfCusList;
+    private JList<CustomerOfHs_Date> CusOfHomesList;
+    private JLabel labelCusOfHs;
+    private JLabel labelHomesOfCus;
     private static final SwingAccount swingAccount = new SwingAccount();
     private static final SwingManage manage = new SwingManage();
     private static final String PATH_CUSTOMER = "file_Data/customer";
@@ -51,12 +54,14 @@ public class SwingManage extends JFrame{
     private static final IO_Read_Write_File<CustomerOfHs_Date> fileHomeDate = new IO_Read_Write_File<>();
     private static ArrayList<Customer> customers ;
     private static ArrayList<Homestay> homestays ;
-    private static ArrayList<HomestayOfCus_Date> homeOfCus_Date;
-    private static ArrayList<CustomerOfHs_Date> cusOfHome_Date ;
+    private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
+    private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates ;
     private static final AccountAdmin accountAdmins = new AccountAdmin();
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static DefaultListModel<Homestay> listHomestayModel ;
     private static DefaultListModel<Customer> listCustomerModel ;
+    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel ;
+    private static DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel ;
 
     SwingManage(){
         super("Homestay");
@@ -73,6 +78,10 @@ public class SwingManage extends JFrame{
         listCustomerModel = new DefaultListModel<>();
         listHomestay.setModel(listHomestayModel);
         listCustomer.setModel(listCustomerModel);
+        listHomestayOfCusModel = new DefaultListModel<>();
+        HomeOfCusList.setModel(listHomestayOfCusModel);
+        listCustomerOfHsModel = new DefaultListModel<>();
+        CusOfHomesList.setModel(listCustomerOfHsModel);
 
         logOut.addActionListener(new ActionListener() {
             @Override
@@ -121,6 +130,7 @@ public class SwingManage extends JFrame{
                     textHighlightHs.setText(homestay.getHighlight());
                     textAccHs.setText(homestay.getAccHomestay());
                     textPassHs.setText(homestay.getPassHomestay());
+                    cusOfHomesList(homestay.getAccHomestay(), homestay.getNameHs());
                     saveHs.setEnabled(true);
                     deleteHs.setEnabled(true);
                 } else {
@@ -167,6 +177,7 @@ public class SwingManage extends JFrame{
                     textNationlity.setText(customer.getNationality());
                     textAccount.setText(customer.getAccount());
                     textPassWord.setText(customer.getPassword());
+                    homeOfCusList(customer.getAccount(), customer.getName());
                     saveCustomer.setEnabled(true);
                     deleteCustomer.setEnabled(true);
                 } else {
@@ -175,10 +186,21 @@ public class SwingManage extends JFrame{
                 }
             }
         });
+        CusOfHomesList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+            }
+        });
+        HomeOfCusList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+
+            }
+        });
     }
 
     public void refreshHomestayList(){
-        checkFileHs();
         listHomestayModel.removeAllElements();
         for (Homestay homestay : homestays){
             listHomestayModel.addElement(homestay);
@@ -186,10 +208,35 @@ public class SwingManage extends JFrame{
     }
 
     public void refreshCustomerList(){
-        checkFileCustomer();
         listCustomerModel.removeAllElements();
         for (Customer customer : customers){
             listCustomerModel.addElement(customer);
+        }
+    }
+
+    public void cusOfHomesList(String accHomes , String nameHomes){
+        if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes)) == null){
+            cusOfHome_Dates = new ArrayList<>();
+        } else {
+            labelCusOfHs.setText(String.format("Danh sách khách hàng của %s", nameHomes));
+            cusOfHome_Dates = fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes));
+            listCustomerOfHsModel.removeAllElements();
+            for (CustomerOfHs_Date cusOfHs : cusOfHome_Dates){
+                listCustomerOfHsModel.addElement(cusOfHs);
+            }
+        }
+    }
+
+    public void homeOfCusList(String accCus, String nameCus){
+        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null){
+            homeOfCus_Dates = new ArrayList<>();
+        } else {
+            labelHomesOfCus.setText(String.format("Danh sách homestay của %s", nameCus));
+            homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
+            listHomestayOfCusModel.removeAllElements();
+            for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates){
+                listHomestayOfCusModel.addElement(homeOfCus);
+            }
         }
     }
 
@@ -243,7 +290,6 @@ public class SwingManage extends JFrame{
     }
 
     public void buttonAddHsClicked(ActionEvent e){
-//        checkFileHs();
         Homestay homestay = new Homestay(
                 textNameHs.getText(),
                 Integer.parseInt(textPriceHs.getText()),
@@ -269,7 +315,7 @@ public class SwingManage extends JFrame{
                 boolean check = homestays.add(homestay);
                 if (check) {
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                    checkFile_cusOfHomes_Date();
+                    fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", textAccHs.getText()));
                     refreshHomestayList();
                     LabelHs.setText("Homestay " + homestay.getNameHs() + " tạo thành công!");
                 } else {
@@ -280,7 +326,6 @@ public class SwingManage extends JFrame{
     }
 
     public void buttonAddCusClicked(ActionEvent e) {
-//        checkFileCustomer();
         Customer customer = new Customer(
                 textName.getText(),
                 (String) comboBoxGender.getSelectedItem(),
@@ -305,7 +350,7 @@ public class SwingManage extends JFrame{
                 boolean check = customers.add(customer);
                 if (check) {
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
-                    checkFile_homeOfCus_Date();
+                    fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData",textAccount.getText()));
                     refreshCustomerList();
                     LabelCus.setText("Tài khoản " + customer.getAccount() + " tạo thành công!");
                 } else {
@@ -395,18 +440,6 @@ public class SwingManage extends JFrame{
             Read_Write_file.writerFile(customers, PATH_CUSTOMER);
             LabelCus.setText("Lưu thành công!");
             refreshCustomerList();
-        }
-    }
-
-    public void checkFile_homeOfCus_Date(){
-        if (fileCusDate.readFile(String.format("file_Data/File%sData",textAccount.getText())) == null) {
-            fileCusDate.writerFile(homeOfCus_Date, String.format("file_Data/File%sData",textAccount.getText()));
-        }
-    }
-
-    public void checkFile_cusOfHomes_Date(){
-        if (fileHomeDate.readFile(String.format("file_Data/File%sData", textAccHs.getText())) == null) {
-            fileHomeDate.writerFile(cusOfHome_Date, String.format("file_Data/File%sData", textAccHs.getText()));
         }
     }
 }
