@@ -89,16 +89,20 @@ public class SwingManage extends JFrame{
         saveHs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                refreshHomestayList();
+                buttonSaveHsClicked(e);
             }
         });
         deleteHs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                checkFileHs();
-                homestays.removeIf((homestay) -> (homestay.getAccHomestay().equals(textAccHs.getText())));
-                Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                refreshHomestayList();
+                int homeNumer = listHomestay.getSelectedIndex();
+                if (homeNumer >= 0){
+                    Homestay homestay = homestays.get(homeNumer);
+                    homestays.remove(homestay);
+                    LabelHs.setText("Xóa homestay "+homestay.getNameHs()+" thành công!");
+                    Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
+                    refreshHomestayList();
+                }
             }
         });
         listHomestay.addListSelectionListener(new ListSelectionListener() {
@@ -132,23 +136,28 @@ public class SwingManage extends JFrame{
         saveCustomer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                refreshCustomerList();
+                buttonSaveCusClicked(e);
             }
         });
         deleteCustomer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                customers.removeIf((customer) -> (customer.getAccount().equals(textAccount.getText())));
-                Read_Write_file.writerFile(customers, PATH_CUSTOMER);
-                refreshCustomerList();
+                int CusNumer = listCustomer.getSelectedIndex();
+                if (CusNumer >= 0){
+                    Customer customer = customers.get(CusNumer);
+                    customers.remove(customer);
+                    LabelCus.setText("Xóa khách hàng "+customer.getName()+" thành công!");
+                    Read_Write_file.writerFile(customers, PATH_CUSTOMER);
+                    refreshCustomerList();
+                }
             }
         });
         listCustomer.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                int homeNumer = listCustomer.getSelectedIndex();
-                if (homeNumer >= 0){
-                    Customer customer = customers.get(homeNumer);
+                int CusNumer = listCustomer.getSelectedIndex();
+                if (CusNumer >= 0){
+                    Customer customer = customers.get(CusNumer);
                     textName.setText(customer.getName());
                     comboBoxGender.setSelectedItem(customer.getGender());
                     textPhone.setText(customer.getPhoneNumber());
@@ -299,6 +308,89 @@ public class SwingManage extends JFrame{
                     LabelCus.setText("Tạo tài khoản không thành công!");
                 }
             }
+        }
+    }
+
+    public void buttonSaveHsClicked(ActionEvent e){
+        int homeNumer = listHomestay.getSelectedIndex();
+        if (homeNumer >= 0){
+            Homestay homestay = homestays.get(homeNumer);
+            String nameHsNew = textNameHs.getText();
+            if (nameHsNew.equals("")){
+                homestay.setNameHs(homestay.getNameHs());
+            } else {
+                homestay.setNameHs(nameHsNew);
+            }
+            if (textPriceHs.getText().equals("")){
+                homestay.setPriceHs(homestay.getPriceHs());
+            } else {
+                homestay.setPriceHs(Integer.parseInt(textPriceHs.getText()));
+            }
+            if (textPriceHs.getText().equals("") | !checkPhoneNumber(textPriceHs.getText())){
+                homestay.setPhoneNumberHs(homestay.getPhoneNumberHs());
+            } else {
+                homestay.setPhoneNumberHs(textPriceHs.getText());
+            }
+            if (textAddressHs.getText().equals("")){
+                homestay.setAddress(homestay.getAddress());
+            } else {
+                homestay.setAddress(textAddressHs.getText());
+            }
+            if (textQAddressHs.getText().equals("")){
+                homestay.setCountyAddress(homestay.getCountyAddress());
+            } else {
+                homestay.setCountyAddress(textQAddressHs.getText());
+            }
+            if (textHighlightHs.getText().equals("")){
+                homestay.setHighlight(homestay.getHighlight());
+            } else {
+                homestay.setHighlight(textHighlightHs.getText());
+            }
+            String passHsNew = textPassHs.getText();
+            if (accountPasswordExample.validate(passHsNew)){
+                homestay.setPassHomestay(passHsNew);
+            } else {
+                homestay.setPassHomestay(homestay.getPassHomestay());
+            }
+            Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
+            LabelHs.setText("Lưu thành công!");
+            refreshHomestayList();
+        }
+    }
+
+    public void buttonSaveCusClicked(ActionEvent e){
+        int CusNumer = listCustomer.getSelectedIndex();
+        if (CusNumer >= 0){
+            Customer customer = customers.get(CusNumer);
+            if (textName.getText().equals("")){
+                customer.setName(customer.getName());
+            } else {
+                customer.setName(textName.getText());
+            }
+            customer.setGender((String) comboBoxGender.getSelectedItem());
+            if (textPhone.getText().equals("") | checkPhoneNumber(textPhone.getText())){
+                customer.setPhoneNumber(customer.getPhoneNumber());
+            } else {
+                customer.setPhoneNumber(textPhone.getText());
+            }
+            if (textDayBirth.getText().equals("")){
+                customer.setDateOfBirth(String.valueOf(customer.getDateOfBirth()));
+            } else {
+                customer.setDateOfBirth(textDayBirth.getText());
+            }
+            if (textNationlity.getText().equals("")){
+                customer.setNationality(customer.getNationality());
+            } else {
+                customer.setNationality(textNationlity.getText());
+            }
+            if (accountPasswordExample.validate(textPassWord.getText())){
+                customer.setPassword(customer.getPassword());
+            } else {
+                customer.setPassword(textPassWord.getText());
+            }
+            Read_Write_file.writerFile(customers, PATH_CUSTOMER);
+            LabelCus.setText("Lưu thành công!");
+            refreshCustomerList();
         }
     }
 }
