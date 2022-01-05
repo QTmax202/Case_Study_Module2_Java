@@ -2,9 +2,11 @@ package Java_Swing;
 
 import Product.AccountAdmin;
 import Product.Customer;
+import Product.HomestayOfCus_Date;
 import Product.Homestay;
 import Read_Write_file.IO_Read_Write_File;
 import Regex.AccountPasswordExample;
+import Regex.PhoneNumberExample;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,12 +27,16 @@ public class SwingCustomerAccount extends JFrame {
     private JLabel textNew;
     private static final IO_Read_Write_File<Customer> Read_Write_file = new IO_Read_Write_File<>();
     private static final IO_Read_Write_File<Homestay> Read_Write_file1 = new IO_Read_Write_File<>();
+    private static final IO_Read_Write_File<HomestayOfCus_Date> fileCusDate = new IO_Read_Write_File<>();
     private static final String PATH_CUSTOMER = "file_Data/customer";
     private static final String PATH_HOMESTAY = "file_Data/homestay";
     private static ArrayList<Customer> customers;
+    private static ArrayList<HomestayOfCus_Date> homeOfCus_Date;
     private static final ArrayList<Homestay> homestays = Read_Write_file1.readFile(PATH_HOMESTAY);
     private static final AccountAdmin accountAdmins = new AccountAdmin();
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
+    private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
+//    private final CheckLoginConditions checkLoginConditions = new CheckLoginConditions();
 
     SwingCustomerAccount() {
         super("Homestay");
@@ -88,6 +94,12 @@ public class SwingCustomerAccount extends JFrame {
         }
     }
 
+    public void checkFile_homeOfCus_Date(){
+        if (fileCusDate.readFile(String.format("file_Data/File%sData",textAccount.getText())) == null) {
+            fileCusDate.writerFile(homeOfCus_Date, String.format("file_Data/File%sData",textAccount.getText()));
+        }
+    }
+
     public void saveButtonClicked(ActionEvent e) {
         checkFileCustomer();
         Customer customer = new Customer(
@@ -103,7 +115,7 @@ public class SwingCustomerAccount extends JFrame {
         boolean checkAccountRegex = accountPasswordExample.validate(textAccount.getText());
         boolean checkPasswordRegex = accountPasswordExample.validate(textPassWord.getText());
 
-        if (!checkAccountRegex | !checkPasswordRegex) {
+        if (!checkAccountRegex | !checkPasswordRegex | !phoneNumberExample.validate(textPhone.getText())) {
             textNew.setText("Không có ký tự đặc biệt hay dấu cách!");
         } else {
             if (!checkAccount(textAccount.getText())) {
@@ -114,6 +126,7 @@ public class SwingCustomerAccount extends JFrame {
                 boolean check = customers.add(customer);
                 if (check) {
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
+                    checkFile_homeOfCus_Date();
                     textNew.setText("Tài khoản " + customer.getAccount() + " tạo thành công!");
                 } else {
                     textNew.setText("Tạo tài khoản không thành công!");

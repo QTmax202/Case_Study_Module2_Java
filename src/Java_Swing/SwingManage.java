@@ -1,8 +1,6 @@
 package Java_Swing;
 
-import Product.AccountAdmin;
-import Product.Customer;
-import Product.Homestay;
+import Product.*;
 import Read_Write_file.IO_Read_Write_File;
 import Regex.AccountPasswordExample;
 
@@ -49,8 +47,12 @@ public class SwingManage extends JFrame{
     private static final String PATH_HOMESTAY = "file_Data/homestay";
     private static final IO_Read_Write_File<Customer> Read_Write_file = new IO_Read_Write_File<>();
     private static final IO_Read_Write_File<Homestay> Read_Write_file1 = new IO_Read_Write_File<>();
+    private static final IO_Read_Write_File<HomestayOfCus_Date> fileCusDate = new IO_Read_Write_File<>();
+    private static final IO_Read_Write_File<CustomerOfHs_Date> fileHomeDate = new IO_Read_Write_File<>();
     private static ArrayList<Customer> customers ;
     private static ArrayList<Homestay> homestays ;
+    private static ArrayList<HomestayOfCus_Date> homeOfCus_Date;
+    private static ArrayList<CustomerOfHs_Date> cusOfHome_Date ;
     private static final AccountAdmin accountAdmins = new AccountAdmin();
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static DefaultListModel<Homestay> listHomestayModel ;
@@ -267,6 +269,7 @@ public class SwingManage extends JFrame{
                 boolean check = homestays.add(homestay);
                 if (check) {
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
+                    checkFile_cusOfHomes_Date();
                     refreshHomestayList();
                     LabelHs.setText("Homestay " + homestay.getNameHs() + " tạo thành công!");
                 } else {
@@ -302,6 +305,7 @@ public class SwingManage extends JFrame{
                 boolean check = customers.add(customer);
                 if (check) {
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
+                    checkFile_homeOfCus_Date();
                     refreshCustomerList();
                     LabelCus.setText("Tài khoản " + customer.getAccount() + " tạo thành công!");
                 } else {
@@ -391,6 +395,18 @@ public class SwingManage extends JFrame{
             Read_Write_file.writerFile(customers, PATH_CUSTOMER);
             LabelCus.setText("Lưu thành công!");
             refreshCustomerList();
+        }
+    }
+
+    public void checkFile_homeOfCus_Date(){
+        if (fileCusDate.readFile(String.format("file_Data/File%sData",textAccount.getText())) == null) {
+            fileCusDate.writerFile(homeOfCus_Date, String.format("file_Data/File%sData",textAccount.getText()));
+        }
+    }
+
+    public void checkFile_cusOfHomes_Date(){
+        if (fileHomeDate.readFile(String.format("file_Data/File%sData", textAccHs.getText())) == null) {
+            fileHomeDate.writerFile(cusOfHome_Date, String.format("file_Data/File%sData", textAccHs.getText()));
         }
     }
 }

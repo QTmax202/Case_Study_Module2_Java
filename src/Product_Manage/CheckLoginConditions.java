@@ -4,7 +4,6 @@ import Product.AccountAdmin;
 import Product.Customer;
 import Product.Homestay;
 import Read_Write_file.IO_Read_Write_File;
-
 import java.util.ArrayList;
 
 public class CheckLoginConditions {

@@ -2,9 +2,11 @@ package Java_Swing;
 
 import Product.AccountAdmin;
 import Product.Customer;
+import Product.CustomerOfHs_Date;
 import Product.Homestay;
 import Read_Write_file.IO_Read_Write_File;
 import Regex.AccountPasswordExample;
+import Regex.PhoneNumberExample;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,12 +28,15 @@ public class SwingHomestayAccount extends JFrame{
     private JLabel textNew;
     private static final IO_Read_Write_File<Customer> Read_Write_file = new IO_Read_Write_File<>();
     private static final IO_Read_Write_File<Homestay> Read_Write_file1 = new IO_Read_Write_File<>();
+    private static final IO_Read_Write_File<CustomerOfHs_Date> fileHomeDate = new IO_Read_Write_File<>();
     private static final String PATH_CUSTOMER = "file_Data/customer";
     private static final String PATH_HOMESTAY = "file_Data/homestay";
     private static final ArrayList<Customer> customers = Read_Write_file.readFile(PATH_CUSTOMER);
     private static ArrayList<Homestay> homestays;
+    private static ArrayList<CustomerOfHs_Date> cusOfHome_Date ;
     private static final AccountAdmin accountAdmins = new AccountAdmin();
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
+    private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
 
     SwingHomestayAccount(){
         super("Homestay");
@@ -64,7 +69,7 @@ public class SwingHomestayAccount extends JFrame{
         boolean checkAccountRegex = accountPasswordExample.validate(textAccHs.getText());
         boolean checkPasswordRegex = accountPasswordExample.validate(textPassHs.getText());
 
-        if (!checkAccountRegex | !checkPasswordRegex) {
+        if (!checkAccountRegex | !checkPasswordRegex | !phoneNumberExample.validate(textPhoneHs.getText())) {
             textNew.setText("Không có ký tự đặc biệt hay dấu cách!");
         } else {
             if (!checkAccount(textAccHs.getText())) {
@@ -75,6 +80,7 @@ public class SwingHomestayAccount extends JFrame{
                 boolean check = homestays.add(homestay);
                 if (check) {
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
+                    checkFile_cusOfHomes_Date();
                     textNew.setText("Homestay " + homestay.getNameHs() + " tạo thành công!");
                 } else {
                     textNew.setText("Tạo Homestay không thành công!");
@@ -88,6 +94,12 @@ public class SwingHomestayAccount extends JFrame{
             homestays = new ArrayList<>();
         } else {
             homestays = Read_Write_file1.readFile(PATH_HOMESTAY);
+        }
+    }
+
+    public void checkFile_cusOfHomes_Date(){
+        if (fileHomeDate.readFile(String.format("file_Data/File%sData", textAccHs.getText())) == null) {
+            fileHomeDate.writerFile(cusOfHome_Date, String.format("file_Data/File%sData", textAccHs.getText()));
         }
     }
 

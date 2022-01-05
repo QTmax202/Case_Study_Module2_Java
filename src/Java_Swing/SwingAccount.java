@@ -24,6 +24,7 @@ public class SwingAccount extends JFrame{
     private static final SwingCustomerAccount swingCustomerAccount = new SwingCustomerAccount();
     private static final SwingCustomer swingCustomer = new SwingCustomer();
     private static final SwingManage swingManage = new SwingManage();
+    private static final SwingManageHomestay swingManageHomestay = new SwingManageHomestay();
     private static final SwingHomestayAccount swingHomestayAccount = new SwingHomestayAccount();
     private static final IO_Read_Write_File<Customer> Read_Write_file = new IO_Read_Write_File<>();
     private static final IO_Read_Write_File<Homestay> Read_Write_file1 = new IO_Read_Write_File<>();
@@ -105,7 +106,7 @@ public class SwingAccount extends JFrame{
         }
         for (Homestay homestay : homestays){
             if (homestay.getAccHomestay().equals(textAccountField.getText()) && homestay.getPassHomestay().equals(passwordField.getText())){
-                swingCustomer.setVisible(true);
+                swingManageHomestay.setVisible(true);
 //                swingCustomer.accountHomestay = homestay.getAccHomestay();
                 swingAccount.setVisible(false);
                 return true;

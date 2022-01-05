@@ -3,11 +3,11 @@ package Product;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class Customer_Date {
+public class HomestayOfCus_Date {
     private Homestay homestayCus;
     private LocalDate registrationDateCus;
 
-    public Customer_Date(Homestay homestay, String registrationDate) {
+    public HomestayOfCus_Date(Homestay homestay, String registrationDate) {
         this.homestayCus = homestay;
         this.registrationDateCus = LocalDate.parse(registrationDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
