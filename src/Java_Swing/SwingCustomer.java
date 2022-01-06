@@ -184,12 +184,12 @@ public class SwingCustomer extends JFrame {
         if (!checkAccountRegex | !checkPasswordRegex | !checkPhoneRegex) {
             LabelCus.setText("Không có ký tự đặc biệt hay dấu cách!");
         } else {
-            boolean check = customers.add(customerNew);
             if (textAccount.getText().equals(customer.getAccount())){
+                customers.removeIf((cus) -> (cus.getAccount().equals(customer.getAccount())));
+                file_Customer.writerFile(customers, PATH_CUSTOMER);
+                boolean check = customers.add(customerNew);
                 if (check) {
-                    customers.removeIf((cus) -> (cus.getAccount().equals(customer.getAccount())));
                     file_Customer.writerFile(customers, PATH_CUSTOMER);
-//                    file_Customer.writerFile(customers, PATH_CUSTOMER);
                     LabelCus.setText("Tài khoản " + customerNew.getAccount() + "  lưu thành công!");
                 } else {
                     LabelCus.setText("Tài khoản lưu không thành công!");

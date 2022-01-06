@@ -393,10 +393,11 @@ public class SwingManage extends JFrame {
             if (!checkAccountRegex | !checkPasswordRegex | !checkPhoneRegex) {
                 LabelHs.setText("Không có ký tự đặc biệt hay dấu cách!");
             } else {
-                boolean check = homestays.add(homestayNew);
                 if (textAccHs.getText().equals(homestay.getAccHomestay())){
+                    homestays.removeIf((homes) -> (homes.getAccHomestay().equals(homestay.getAccHomestay())));
+                    Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
+                    boolean check = homestays.add(homestayNew);
                     if (check ) {
-                        homestays.removeIf((homes) -> (homes.getAccHomestay().equals(homestay.getAccHomestay())));
                         Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
                         refreshHomestayList();
                         LabelHs.setText("Homestay " + homestayNew.getNameHs() + " lưu thành công!");
@@ -432,10 +433,11 @@ public class SwingManage extends JFrame {
             if (!checkAccountRegex | !checkPasswordRegex | !checkPhoneRegex) {
                 LabelCus.setText("Không có ký tự đặc biệt hay dấu cách!");
             } else {
-                boolean check = customers.add(customerNew);
                 if (textAccount.getText().equals(customer.getAccount())){
+                    customers.removeIf((cus) -> (cus.getAccount().equals(customer.getAccount())));
+                    Read_Write_file.writerFile(customers, PATH_CUSTOMER);
+                    boolean check = customers.add(customerNew);
                     if (check) {
-                        customers.remove(customer);
                         Read_Write_file.writerFile(customers, PATH_CUSTOMER);
                         refreshCustomerList();
                         LabelCus.setText("Tài khoản " + customerNew.getAccount() + "  lưu thành công!");

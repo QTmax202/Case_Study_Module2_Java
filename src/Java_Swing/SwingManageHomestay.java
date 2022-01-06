@@ -39,6 +39,7 @@ public class SwingManageHomestay extends JFrame{
     private JPanel swingmanageHome;
     private JLabel LabelEndDate;
     private JLabel LabelStartDate;
+    private JButton buttonLogOut;
     public Homestay homestay;
     private static final SwingAccount swingAccount = new SwingAccount();
     private static final SwingManageHomestay swingManageHomestay = new SwingManageHomestay();
@@ -94,6 +95,13 @@ public class SwingManageHomestay extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 buttonDeleteCusOfHomesClicked(e);
+            }
+        });
+        buttonLogOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                swingManageHomestay.setEnabled(false);
+                swingAccount.setVisible(true);
             }
         });
     }
@@ -162,10 +170,11 @@ public class SwingManageHomestay extends JFrame{
         if (!checkAccountRegex | !checkPasswordRegex | !checkPhoneRegex) {
             LabelHs.setText("Không có ký tự đặc biệt hay dấu cách!");
         } else {
-            boolean check = homestays.add(homestayNew);
             if (textAccHs.getText().equals(homestay.getAccHomestay())){
+                homestays.removeIf((homes) -> (homes.getAccHomestay().equals(homestay.getAccHomestay())));
+                file_Homestay.writerFile(homestays, PATH_HOMESTAY);
+                boolean check = homestays.add(homestayNew);
                 if (check ) {
-                    homestays.removeIf((homes) -> (homes.getAccHomestay().equals(homestay.getAccHomestay())));
                     file_Homestay.writerFile(homestays, PATH_HOMESTAY);
                     refreshHomestayList();
                     LabelHs.setText("Homestay " + homestayNew.getNameHs() + " lưu thành công!");

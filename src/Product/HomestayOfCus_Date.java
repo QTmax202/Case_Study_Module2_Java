@@ -7,7 +7,6 @@ public class HomestayOfCus_Date {
     private Homestay homestayOfCus;
     private LocalDate startDateOfCus;
     private LocalDate endDateOfCus;
-//    private LocalDate registrationDateOfCus;
 
     public HomestayOfCus_Date(Homestay homestay, String startDateCus, String endDateCus) {
         this.homestayOfCus = homestay;
