@@ -102,9 +102,9 @@ public class SwingAccount extends JFrame{
                 swingCustomer.setVisible(true);
                 SwingCustomer.customer = customer;
                 swingCustomer.checkFileHomes();
+                swingCustomer.checkFileHomeOfCus_Date();
                 swingCustomer.startSwing();
                 swingCustomer.refreshHomestayList();
-                swingCustomer.checkFileHomeOfCus_Date();
                 swingCustomer.listHomeOfCus();
                 swingAccount.setVisible(false);
                 return true;
@@ -113,6 +113,11 @@ public class SwingAccount extends JFrame{
         for (Homestay homestay : homestays){
             if (homestay.getAccHomestay().equals(textAccount.getText()) && homestay.getPassHomestay().equals(textPassword.getText())){
                 swingManageHomestay.setVisible(true);
+                swingManageHomestay.homestay = homestay;
+                swingManageHomestay.checkFileCusOfHs_Date();
+                swingManageHomestay.checkFileCustomer();
+                swingManageHomestay.refreshHomestayList();
+                swingManageHomestay.startSwing();
                 swingAccount.setVisible(false);
                 return true;
             }

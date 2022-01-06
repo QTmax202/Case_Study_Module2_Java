@@ -4,42 +4,49 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class HomestayOfCus_Date {
-    private Homestay homestayCus;
-    private LocalDate startDateCus;
-    private LocalDate endDateCus;
+    private Homestay homestayOfCus;
+    private LocalDate startDateOfCus;
+    private LocalDate endDateOfCus;
+//    private LocalDate registrationDateOfCus;
 
     public HomestayOfCus_Date(Homestay homestay, String startDateCus, String endDateCus) {
-        this.homestayCus = homestay;
-        this.startDateCus = LocalDate.parse(startDateCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        this.endDateCus = LocalDate.parse(endDateCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.homestayOfCus = homestay;
+        this.startDateOfCus = LocalDate.parse(startDateCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.endDateOfCus = LocalDate.parse(endDateCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    public Homestay getHomestayCus() {
-        return homestayCus;
+    public Homestay getHomestayOfCus() {
+        return homestayOfCus;
     }
 
-    public void setHomestayCus(Homestay homestayCus) {
-        this.homestayCus = homestayCus;
+    public void setHomestayOfCus(Homestay homestayOfCus) {
+        this.homestayOfCus = homestayOfCus;
     }
 
     public LocalDate getStartDateCusCus() {
-        return startDateCus;
+        return startDateOfCus;
     }
 
     public void setStartDateCusCus(String startDateCus) {
-        this.startDateCus = LocalDate.parse(startDateCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.startDateOfCus = LocalDate.parse(startDateCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    public LocalDate getEndDateCus() {
-        return endDateCus;
+    public LocalDate getEndDateOfCus() {
+        return endDateOfCus;
     }
 
-    public void setEndDateCus(String endDateCus) {
-        this.endDateCus = LocalDate.parse(endDateCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    public void setEndDateOfCus(String endDateOfCus) {
+        this.endDateOfCus = LocalDate.parse(endDateOfCus, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     @Override
     public String toString() {
-        return String.format("%s- %s,%s [%s - %s]\n", homestayCus.getNameHs(), homestayCus.getAddress() , homestayCus.getCountyAddress(), startDateCus, endDateCus);
+        return String.format("%s- %s,%s [%s - %s]\n",
+                homestayOfCus.getNameHs(),
+                homestayOfCus.getAddress(),
+                homestayOfCus.getCountyAddress(),
+                startDateOfCus.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                endDateOfCus.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        );
     }
 }
