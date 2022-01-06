@@ -63,8 +63,8 @@ public class SwingManage extends JFrame {
     private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
     private static DefaultListModel<Homestay> listHomestayModel;
     private static DefaultListModel<Customer> listCustomerModel;
-    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel;
-    private static DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel;
+//    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel;
+//    private static DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel;
 
     SwingManage() {
         super("Homestay");
@@ -81,12 +81,6 @@ public class SwingManage extends JFrame {
         listCustomerModel = new DefaultListModel<>();
         listHomestay.setModel(listHomestayModel);
         listCustomer.setModel(listCustomerModel);
-        listHomestayOfCusModel = new DefaultListModel<>();
-        HomeOfCusList.setModel(listHomestayOfCusModel);
-        HomeOfCusList.setEnabled(false);
-        listCustomerOfHsModel = new DefaultListModel<>();
-        CusOfHomesList.setModel(listCustomerOfHsModel);
-        CusOfHomesList.setEnabled(false);
 
         logOut.addActionListener(new ActionListener() {
             @Override
@@ -95,7 +89,6 @@ public class SwingManage extends JFrame {
                 swingAccount.setVisible(true);
             }
         });
-
         addHs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -138,11 +131,9 @@ public class SwingManage extends JFrame {
                     cusOfHomesList(homestay.getAccHomestay(), homestay.getNameHs());
                     saveHs.setEnabled(true);
                     deleteHs.setEnabled(true);
-                    CusOfHomesList.setEnabled(true);
                 } else {
                     saveHs.setEnabled(false);
                     deleteHs.setEnabled(false);
-                    CusOfHomesList.setEnabled(false);
                 }
             }
         });
@@ -187,11 +178,9 @@ public class SwingManage extends JFrame {
                     homeOfCusList(customer.getAccount(), customer.getName());
                     saveCustomer.setEnabled(true);
                     deleteCustomer.setEnabled(true);
-                    HomeOfCusList.setEnabled(true);
                 } else {
                     saveCustomer.setEnabled(false);
                     deleteCustomer.setEnabled(false);
-                    HomeOfCusList.setEnabled(false);
                 }
             }
         });
@@ -224,9 +213,9 @@ public class SwingManage extends JFrame {
     }
 
     public void cusOfHomesList(String accHomes, String nameHomes) {
-        if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes)) == null) {
-            cusOfHome_Dates = new ArrayList<>();
-        } else {
+        DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel = listCustomerOfHsModel = new DefaultListModel<>();
+        CusOfHomesList.setModel(listCustomerOfHsModel);
+        if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes)) != null) {
             labelCusOfHs.setText(String.format("Danh sách khách hàng của %s", nameHomes));
             cusOfHome_Dates = fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes));
             listCustomerOfHsModel.removeAllElements();
@@ -237,9 +226,9 @@ public class SwingManage extends JFrame {
     }
 
     public void homeOfCusList(String accCus, String nameCus) {
-        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
-            homeOfCus_Dates = new ArrayList<>();
-        } else {
+        DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel = listHomestayOfCusModel = new DefaultListModel<>();
+        HomeOfCusList.setModel(listHomestayOfCusModel);
+        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) != null) {
             labelHomesOfCus.setText(String.format("Danh sách homestay của %s", nameCus));
             homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
             listHomestayOfCusModel.removeAllElements();
