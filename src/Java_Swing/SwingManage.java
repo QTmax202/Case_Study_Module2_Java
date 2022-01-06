@@ -396,13 +396,17 @@ public class SwingManage extends JFrame {
                 if (textAccHs.getText().equals(homestay.getAccHomestay())){
                     homestays.removeIf((homes) -> (homes.getAccHomestay().equals(homestay.getAccHomestay())));
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                    boolean check = homestays.add(homestayNew);
-                    if (check ) {
-                        Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                        refreshHomestayList();
-                        LabelHs.setText("Homestay " + homestayNew.getNameHs() + " lưu thành công!");
+                    if (!checkPhoneNumber(textPhoneHs.getText())) {
+                        LabelHs.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
                     } else {
-                        LabelHs.setText("Tạo Homestay lưu không thành công!");
+                        boolean check = homestays.add(homestayNew);
+                        if (check ) {
+                            Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
+                            refreshHomestayList();
+                            LabelHs.setText("Homestay " + homestayNew.getNameHs() + " lưu thành công!");
+                        } else {
+                            LabelHs.setText("Tạo Homestay lưu không thành công!");
+                        }
                     }
                 } else {
                     textAccHs.setText(homestay.getAccHomestay());
@@ -436,13 +440,17 @@ public class SwingManage extends JFrame {
                 if (textAccount.getText().equals(customer.getAccount())){
                     customers.removeIf((cus) -> (cus.getAccount().equals(customer.getAccount())));
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
-                    boolean check = customers.add(customerNew);
-                    if (check) {
-                        Read_Write_file.writerFile(customers, PATH_CUSTOMER);
-                        refreshCustomerList();
-                        LabelCus.setText("Tài khoản " + customerNew.getAccount() + "  lưu thành công!");
+                    if (!checkPhoneNumber(textPhone.getText())) {
+                        LabelCus.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
                     } else {
-                        LabelCus.setText("Tài khoản lưu không thành công!");
+                        boolean check = customers.add(customerNew);
+                        if (check) {
+                            Read_Write_file.writerFile(customers, PATH_CUSTOMER);
+                            refreshCustomerList();
+                            LabelCus.setText("Tài khoản " + customerNew.getAccount() + "  lưu thành công!");
+                        } else {
+                            LabelCus.setText("Tài khoản lưu không thành công!");
+                        }
                     }
                 } else {
                     textAccount.setText(customer.getAccount());

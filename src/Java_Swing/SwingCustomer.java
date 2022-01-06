@@ -55,6 +55,7 @@ public class SwingCustomer extends JFrame {
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
     private static DefaultListModel<Homestay> listHomestayModel;
+//    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel;
 
     SwingCustomer() {
         super("Homestay");
@@ -137,23 +138,30 @@ public class SwingCustomer extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int homeNumer = listHomestay.getSelectedIndex();
                 if (homeNumer >= 0) {
+                    checkFileHomeOfCus_Date();
                     checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay());
                     Homestay homestay = homestays.get(homeNumer);
-                    checkFileHomeOfCus_Date();
                     if (checkregistrationDate()) {
                         for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
                             if (homeOfCus.getHomestayOfCus().getAccHomestay().equals(homestay.getAccHomestay())) {
                                 homeOfCus_Dates.remove(homeOfCus);
                                 fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-                                cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer() == customer));
+                                cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
                                 fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
-                                break;
                             }
                         }
-                        HomestayOfCus_Date homeOfCus = new HomestayOfCus_Date(homestay, textStartDate.getText(), textEndDate.getText());
+                        HomestayOfCus_Date homeOfCus = new HomestayOfCus_Date(
+                                homestay,
+                                textStartDate.getText(),
+                                textEndDate.getText()
+                        );
                         homeOfCus_Dates.add(homeOfCus);
                         fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-                        CustomerOfHs_Date cusOfHome = new CustomerOfHs_Date(customer, textStartDate.getText(), textEndDate.getText(), LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        CustomerOfHs_Date cusOfHome = new CustomerOfHs_Date(
+                                customer,
+                                textStartDate.getText(),
+                                textEndDate.getText(),
+                                LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                         cusOfHome_Dates.add(cusOfHome);
                         fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
                         LabelRegistration.setText("Đăng ký thành công!");
@@ -187,12 +195,16 @@ public class SwingCustomer extends JFrame {
             if (textAccount.getText().equals(customer.getAccount())){
                 customers.removeIf((cus) -> (cus.getAccount().equals(customer.getAccount())));
                 file_Customer.writerFile(customers, PATH_CUSTOMER);
-                boolean check = customers.add(customerNew);
-                if (check) {
-                    file_Customer.writerFile(customers, PATH_CUSTOMER);
-                    LabelCus.setText("Tài khoản " + customerNew.getAccount() + "  lưu thành công!");
+                if (!checkPhoneNumber(textPhone.getText())){
+                    LabelCus.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
                 } else {
-                    LabelCus.setText("Tài khoản lưu không thành công!");
+                    boolean check = customers.add(customerNew);
+                    if (check) {
+                        file_Customer.writerFile(customers, PATH_CUSTOMER);
+                        LabelCus.setText("Tài khoản " + customerNew.getAccount() + " lưu thành công!");
+                    } else {
+                        LabelCus.setText("Tài khoản lưu không thành công!");
+                    }
                 }
             } else {
                 textAccount.setText(customer.getAccount());
@@ -241,7 +253,6 @@ public class SwingCustomer extends JFrame {
             listHomestayOfCusModel.addElement(homeOfCus);
         }
     }
-
 
     public void checkFileHomeOfCus_Date() {
         if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", customer.getName())) == null) {

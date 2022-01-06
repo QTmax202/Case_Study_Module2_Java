@@ -49,8 +49,8 @@ public class SwingManageHomestay extends JFrame{
     private static final IO_Read_Write_File<Homestay> file_Homestay = new IO_Read_Write_File<>();
     private static final IO_Read_Write_File<HomestayOfCus_Date> fileCusDate = new IO_Read_Write_File<>();
     private static final IO_Read_Write_File<CustomerOfHs_Date> fileHomeDate = new IO_Read_Write_File<>();
-    private static ArrayList<Customer> customers ;
-    private static final ArrayList<Homestay> homestays = file_Homestay.readFile(PATH_HOMESTAY);;
+    private static final ArrayList<Homestay> homestays = file_Homestay.readFile(PATH_HOMESTAY);
+    private static ArrayList<Customer> customers;
     private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
     private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates;
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
@@ -114,6 +114,20 @@ public class SwingManageHomestay extends JFrame{
         }
     }
 
+    public boolean checkPhoneNumber(String phoneNumber) {
+        for (Customer customer : customers) {
+            if (customer.getPhoneNumber().equals(phoneNumber)) {
+                return false;
+            }
+        }
+        for (Homestay homestay : homestays) {
+            if (homestay.getPhoneNumberHs().equals(phoneNumber)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void checkFileHomeOfCus_Date(String accCus) {
         if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
             homeOfCus_Dates = new ArrayList<>();
@@ -135,20 +149,6 @@ public class SwingManageHomestay extends JFrame{
         for (CustomerOfHs_Date cusOfHomes : cusOfHome_Dates) {
             listCustomerOfHsModel.addElement(cusOfHomes);
         }
-    }
-
-    public boolean checkPhoneNumber(String phoneNumber) {
-        for (Customer customer : customers) {
-            if (customer.getPhoneNumber().equals(phoneNumber)) {
-                return false;
-            }
-        }
-        for (Homestay homestay : homestays) {
-            if (homestay.getPhoneNumberHs().equals(phoneNumber)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public void buttonSaveHomesClicked(ActionEvent e){
@@ -173,13 +173,17 @@ public class SwingManageHomestay extends JFrame{
             if (textAccHs.getText().equals(homestay.getAccHomestay())){
                 homestays.removeIf((homes) -> (homes.getAccHomestay().equals(homestay.getAccHomestay())));
                 file_Homestay.writerFile(homestays, PATH_HOMESTAY);
-                boolean check = homestays.add(homestayNew);
-                if (check ) {
-                    file_Homestay.writerFile(homestays, PATH_HOMESTAY);
-                    refreshHomestayList();
-                    LabelHs.setText("Homestay " + homestayNew.getNameHs() + " lưu thành công!");
+                if (!checkPhoneNumber(textPhoneHs.getText())){
+                    LabelHs.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
                 } else {
-                    LabelHs.setText("Tạo Homestay lưu không thành công!");
+                    boolean check = homestays.add(homestayNew);
+                    if (check ) {
+                        file_Homestay.writerFile(homestays, PATH_HOMESTAY);
+                        refreshHomestayList();
+                        LabelHs.setText("Homestay " + homestayNew.getNameHs() + " lưu thành công!");
+                    } else {
+                        LabelHs.setText("Tạo Homestay lưu không thành công!");
+                    }
                 }
             } else {
                 textAccHs.setText(homestay.getAccHomestay());
