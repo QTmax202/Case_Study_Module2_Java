@@ -213,7 +213,7 @@ public class SwingManage extends JFrame {
     }
 
     public void cusOfHomesList(String accHomes, String nameHomes) {
-        DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel = listCustomerOfHsModel = new DefaultListModel<>();
+        DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel = new DefaultListModel<>();
         CusOfHomesList.setModel(listCustomerOfHsModel);
         if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes)) != null) {
             labelCusOfHs.setText(String.format("Danh sách khách hàng của %s", nameHomes));
@@ -226,7 +226,7 @@ public class SwingManage extends JFrame {
     }
 
     public void homeOfCusList(String accCus, String nameCus) {
-        DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel = listHomestayOfCusModel = new DefaultListModel<>();
+        DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel = new DefaultListModel<>();
         HomeOfCusList.setModel(listHomestayOfCusModel);
         if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) != null) {
             labelHomesOfCus.setText(String.format("Danh sách homestay của %s", nameCus));
