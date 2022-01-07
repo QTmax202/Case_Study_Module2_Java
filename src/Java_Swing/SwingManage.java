@@ -56,20 +56,20 @@ public class SwingManage extends JFrame {
     private static final IO_Read_Write_File<CustomerOfHs_Date> fileHomeDate = new IO_Read_Write_File<>();
     private static ArrayList<Customer> customers;
     private static ArrayList<Homestay> homestays;
-    private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
-    private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates;
+//    private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
+//    private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates;
     private static final AccountAdmin accountAdmins = new AccountAdmin();
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
     private static DefaultListModel<Homestay> listHomestayModel;
     private static DefaultListModel<Customer> listCustomerModel;
-//    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel;
-//    private static DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel;
+    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel;
+    private static DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel;
 
     SwingManage() {
         super("Homestay");
         this.setContentPane(this.swingManage);
-        this.setPreferredSize(new Dimension(1560, 680));
+        this.setPreferredSize(new Dimension(1760, 680));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         saveHs.setEnabled(false);
@@ -81,6 +81,12 @@ public class SwingManage extends JFrame {
         listCustomerModel = new DefaultListModel<>();
         listHomestay.setModel(listHomestayModel);
         listCustomer.setModel(listCustomerModel);
+
+        listCustomerOfHsModel = new DefaultListModel<>();
+        CusOfHomesList.setModel(listCustomerOfHsModel);
+
+        listHomestayOfCusModel = new DefaultListModel<>();
+        HomeOfCusList.setModel(listHomestayOfCusModel);
 
         logOut.addActionListener(new ActionListener() {
             @Override
@@ -213,12 +219,10 @@ public class SwingManage extends JFrame {
     }
 
     public void cusOfHomesList(String accHomes, String nameHomes) {
-        DefaultListModel<CustomerOfHs_Date> listCustomerOfHsModel = new DefaultListModel<>();
-        CusOfHomesList.setModel(listCustomerOfHsModel);
         if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes)) != null) {
             labelCusOfHs.setText(String.format("Danh sách khách hàng của %s", nameHomes));
-            cusOfHome_Dates = fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes));
             listCustomerOfHsModel.removeAllElements();
+            ArrayList<CustomerOfHs_Date> cusOfHome_Dates = fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes));
             for (CustomerOfHs_Date cusOfHs : cusOfHome_Dates) {
                 listCustomerOfHsModel.addElement(cusOfHs);
             }
@@ -226,12 +230,10 @@ public class SwingManage extends JFrame {
     }
 
     public void homeOfCusList(String accCus, String nameCus) {
-        DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel = new DefaultListModel<>();
-        HomeOfCusList.setModel(listHomestayOfCusModel);
         if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) != null) {
             labelHomesOfCus.setText(String.format("Danh sách homestay của %s", nameCus));
-            homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
             listHomestayOfCusModel.removeAllElements();
+            ArrayList<HomestayOfCus_Date> homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
             for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
                 listHomestayOfCusModel.addElement(homeOfCus);
             }
@@ -257,34 +259,42 @@ public class SwingManage extends JFrame {
     public boolean checkAccount(String account) {
         for (Customer customer : customers) {
             if (customer.getAccount().equals(account)) {
-                return false;
+                return true;
             }
         }
         for (Homestay homestay : homestays) {
             if (homestay.getAccHomestay().equals(account)) {
-                return false;
+                return true;
             }
         }
         for (AccountAdmin acc : accountAdmins.getListAccountAdmin()) {
             if (acc.getAdminAccount().equals(account)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public boolean checkPhoneNumber(String phoneNumber) {
         for (Customer customer : customers) {
             if (customer.getPhoneNumber().equals(phoneNumber)) {
-                return false;
+                return true;
             }
         }
         for (Homestay homestay : homestays) {
             if (homestay.getPhoneNumberHs().equals(phoneNumber)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
+    }
+
+    public ArrayList<CustomerOfHs_Date> checkFileCusOfHs_Date(String accHs) {
+        if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs)) == null) {
+            return new ArrayList<>();
+        } else {
+            return fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs));
+        }
     }
 
     public void buttonAddHsClicked(ActionEvent e) {
@@ -306,21 +316,29 @@ public class SwingManage extends JFrame {
         if (!checkAccountRegex | !checkPasswordRegex | !checkPhoneRegex) {
             LabelHs.setText("Không có ký tự đặc biệt hay dấu cách!");
         } else {
-            if (!checkAccount(textAccHs.getText())) {
+            if (checkAccount(textAccHs.getText())) {
                 LabelHs.setText("Bị trùng tài khoản, xin nhập tài khoản khác!");
-            } else if (!checkPhoneNumber(textPhoneHs.getText())) {
+            } else if (checkPhoneNumber(textPhoneHs.getText())) {
                 LabelHs.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
             } else {
                 boolean check = homestays.add(homestay);
                 if (check) {
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                    fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", textAccHs.getText()));
+                    fileHomeDate.writerFile(checkFileCusOfHs_Date(textAccHs.getText()), String.format("file_Data/FileHomes%sData", textAccHs.getText()));
                     refreshHomestayList();
                     LabelHs.setText("Homestay " + homestay.getNameHs() + " tạo thành công!");
                 } else {
                     LabelHs.setText("Tạo Homestay không thành công!");
                 }
             }
+        }
+    }
+
+    public ArrayList<HomestayOfCus_Date> checkFileHomeOfCus_Date(String accCus) {
+        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
+            return new ArrayList<>();
+        } else {
+            return fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
         }
     }
 
@@ -342,15 +360,15 @@ public class SwingManage extends JFrame {
         if (!checkAccountRegex | !checkPasswordRegex | !checkPhoneRegex) {
             LabelCus.setText("Không có ký tự đặc biệt hay dấu cách!");
         } else {
-            if (!checkAccount(textAccount.getText())) {
+            if (checkAccount(textAccount.getText())) {
                 LabelCus.setText("Bị trùng tài khoản, xin nhập tài khoản khác!");
-            } else if (!checkPhoneNumber(textPhone.getText())) {
+            } else if (checkPhoneNumber(textPhone.getText())) {
                 LabelCus.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
             } else {
                 boolean check = customers.add(customer);
                 if (check) {
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
-                    fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", textAccount.getText()));
+                    fileCusDate.writerFile(checkFileHomeOfCus_Date(textAccount.getText()), String.format("file_Data/FileCus%sData", textAccount.getText()));
                     refreshCustomerList();
                     LabelCus.setText("Tài khoản " + customer.getAccount() + " tạo thành công!");
                 } else {
@@ -385,7 +403,7 @@ public class SwingManage extends JFrame {
                 if (textAccHs.getText().equals(homestay.getAccHomestay())){
                     homestays.removeIf((homes) -> (homes.getAccHomestay().equals(homestay.getAccHomestay())));
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                    if (!checkPhoneNumber(textPhoneHs.getText())) {
+                    if (checkPhoneNumber(textPhoneHs.getText())) {
                         LabelHs.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
                     } else {
                         boolean check = homestays.add(homestayNew);
@@ -429,7 +447,7 @@ public class SwingManage extends JFrame {
                 if (textAccount.getText().equals(customer.getAccount())){
                     customers.removeIf((cus) -> (cus.getAccount().equals(customer.getAccount())));
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
-                    if (!checkPhoneNumber(textPhone.getText())) {
+                    if (checkPhoneNumber(textPhone.getText())) {
                         LabelCus.setText("Bị trùng số điện thoại, xin nhập số điện thoại khác!");
                     } else {
                         boolean check = customers.add(customerNew);

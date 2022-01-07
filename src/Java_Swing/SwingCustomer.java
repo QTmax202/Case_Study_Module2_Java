@@ -51,11 +51,11 @@ public class SwingCustomer extends JFrame {
     private static final ArrayList<Customer> customers = file_Customer.readFile(PATH_CUSTOMER);
     private static ArrayList<Homestay> homestays ;
     private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
-    private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates;
+//    private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates;
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
-    private static DefaultListModel<Homestay> listHomestayModel;
-//    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel;
+    private static DefaultListModel<Homestay> listHomestayModel ;
+    private static DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel;
 
     SwingCustomer() {
         super("Homestay");
@@ -69,6 +69,9 @@ public class SwingCustomer extends JFrame {
 
         listHomestayModel = new DefaultListModel<>();
         listHomestay.setModel(listHomestayModel);
+
+        listHomestayOfCusModel = new DefaultListModel<>();
+        listHomestayOfMy.setModel(listHomestayOfCusModel);
 
         logOutButton.addActionListener(new ActionListener() {
             @Override
@@ -113,22 +116,20 @@ public class SwingCustomer extends JFrame {
                     highlightOfHomestay.setText(homeOfCus.getHomestayOfCus().getHighlight());
                     deleteHomeOfMyButton.setEnabled(true);
                 } else {
-                    registrationHomestayButton.setEnabled(false);
+                    deleteHomeOfMyButton.setEnabled(false);
                 }
             }
         });
-        deleteHomeOfMyButton.addActionListener(new ActionListener() {
+        deleteHomeOfMyButton.addActionListener(new ActionListener()  {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int homeNumer = listHomestayOfMy.getSelectedIndex();
                 if (homeNumer >= 0) {
-                    checkFileHomeOfCus_Date();
                     HomestayOfCus_Date homeOfCus = homeOfCus_Dates.get(homeNumer);
                     homeOfCus_Dates.remove(homeOfCus);
-                    checkFileCusOfHs_Date(homeOfCus.getHomestayOfCus().getNameHs());
-                    cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer() == customer));
-                    fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homeOfCus.getHomestayOfCus().getAccHomestay()));
                     fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
+                    checkFileCusOfHs_Date(homeOfCus.getHomestayOfCus().getNameHs()).removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
+                    fileHomeDate.writerFile(checkFileCusOfHs_Date(homeOfCus.getHomestayOfCus().getNameHs()), String.format("file_Data/FileHomes%sData", homeOfCus.getHomestayOfCus().getAccHomestay()));
                     listHomeOfCus();
                 }
             }
@@ -138,32 +139,30 @@ public class SwingCustomer extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int homeNumer = listHomestay.getSelectedIndex();
                 if (homeNumer >= 0) {
-                    checkFileHomeOfCus_Date();
-                    checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay());
                     Homestay homestay = homestays.get(homeNumer);
                     if (checkregistrationDate()) {
                         for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
                             if (homeOfCus.getHomestayOfCus().getAccHomestay().equals(homestay.getAccHomestay())) {
                                 homeOfCus_Dates.remove(homeOfCus);
                                 fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-                                cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
-                                fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
+                                checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()).removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
+                                fileHomeDate.writerFile(checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()), String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
                             }
                         }
-                        HomestayOfCus_Date homeOfCus = new HomestayOfCus_Date(
+                        HomestayOfCus_Date homeOfCusNew = new HomestayOfCus_Date(
                                 homestay,
                                 textStartDate.getText(),
                                 textEndDate.getText()
                         );
-                        homeOfCus_Dates.add(homeOfCus);
+                        homeOfCus_Dates.add(homeOfCusNew);
                         fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-                        CustomerOfHs_Date cusOfHome = new CustomerOfHs_Date(
+                        CustomerOfHs_Date cusOfHomeNew = new CustomerOfHs_Date(
                                 customer,
                                 textStartDate.getText(),
                                 textEndDate.getText(),
                                 LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        cusOfHome_Dates.add(cusOfHome);
-                        fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
+                        checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()).add(cusOfHomeNew);
+                        fileHomeDate.writerFile(checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()), String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
                         LabelRegistration.setText("Đăng ký thành công!");
                         listHomeOfCus();
                     } else {
@@ -246,8 +245,6 @@ public class SwingCustomer extends JFrame {
     }
 
     public void listHomeOfCus() {
-        DefaultListModel<HomestayOfCus_Date> listHomestayOfCusModel = new DefaultListModel<>();
-        listHomestayOfMy.setModel(listHomestayOfCusModel);
         listHomestayOfCusModel.removeAllElements();
         for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
             listHomestayOfCusModel.addElement(homeOfCus);
@@ -262,11 +259,19 @@ public class SwingCustomer extends JFrame {
         }
     }
 
-    public void checkFileCusOfHs_Date(String accHs) {
+    public ArrayList<CustomerOfHs_Date> checkFileCusOfHs_Date(String accHs) {
         if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs)) == null) {
-            cusOfHome_Dates = new ArrayList<>();
+            return new ArrayList<>();
         } else {
-            cusOfHome_Dates = fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs));
+            return fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs));
+        }
+    }
+
+    public ArrayList<HomestayOfCus_Date> checkFileHomeOfCus_Date(String accCus) {
+        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
+            return new ArrayList<>();
+        } else {
+            return fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
         }
     }
 
@@ -286,6 +291,6 @@ public class SwingCustomer extends JFrame {
         int intEndDate = endDate.getYear() * 365 + endDate.getDayOfYear();
         int intNowDate = LocalDate.now().getYear() * 365 + LocalDate.now().getDayOfYear();
 
-        return (intStartDate < intEndDate & intStartDate > intNowDate);
+        return (intStartDate < intEndDate & intStartDate >= intNowDate);
     }
 }

@@ -31,7 +31,7 @@ public class SwingCustomerAccount extends JFrame {
     private static final String PATH_CUSTOMER = "file_Data/customer";
     private static final String PATH_HOMESTAY = "file_Data/homestay";
     private static ArrayList<Customer> customers;
-    private static ArrayList<HomestayOfCus_Date> homeOfCus_Date;
+//    private static ArrayList<HomestayOfCus_Date> homeOfCus_Date;
     private static final ArrayList<Homestay> homestays = Read_Write_file1.readFile(PATH_HOMESTAY);
     private static final AccountAdmin accountAdmins = new AccountAdmin();
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
@@ -94,6 +94,14 @@ public class SwingCustomerAccount extends JFrame {
         }
     }
 
+    public ArrayList<HomestayOfCus_Date> checkFileHomeOfCus_Date(String accCus) {
+        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
+            return new ArrayList<>();
+        } else {
+            return fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
+        }
+    }
+
     public void saveButtonClicked(ActionEvent e) {
         checkFileCustomer();
         Customer customer = new Customer(
@@ -119,7 +127,7 @@ public class SwingCustomerAccount extends JFrame {
             } else {
                 boolean check = customers.add(customer);
                 if (check) {
-                    fileCusDate.writerFile(homeOfCus_Date, String.format("file_Data/FileCus%sData",textAccount.getText()));
+                    fileCusDate.writerFile(checkFileHomeOfCus_Date(textAccount.getText()), String.format("file_Data/FileCus%sData",textAccount.getText()));
                     Read_Write_file.writerFile(customers, PATH_CUSTOMER);
                     textNew.setText("Tài khoản " + customer.getAccount() + " tạo thành công!");
                 } else {

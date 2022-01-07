@@ -33,7 +33,7 @@ public class SwingHomestayAccount extends JFrame{
     private static final String PATH_HOMESTAY = "file_Data/homestay";
     private static final ArrayList<Customer> customers = Read_Write_file.readFile(PATH_CUSTOMER);
     private static ArrayList<Homestay> homestays;
-    private static ArrayList<CustomerOfHs_Date> cusOfHome_Date ;
+//    private static ArrayList<CustomerOfHs_Date> cusOfHome_Date ;
     private static final AccountAdmin accountAdmins = new AccountAdmin();
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
@@ -80,7 +80,7 @@ public class SwingHomestayAccount extends JFrame{
                 boolean check = homestays.add(homestay);
                 if (check) {
                     Read_Write_file1.writerFile(homestays, PATH_HOMESTAY);
-                    fileHomeDate.writerFile(cusOfHome_Date, String.format("file_Data/FileHomes%sData", textAccHs.getText()));
+                    fileHomeDate.writerFile(checkFileCusOfHs_Date(textAccHs.getText()), String.format("file_Data/FileHomes%sData", textAccHs.getText()));
                     textNew.setText("Homestay " + homestay.getNameHs() + " tạo thành công!");
                 } else {
                     textNew.setText("Tạo Homestay không thành công!");
@@ -94,6 +94,14 @@ public class SwingHomestayAccount extends JFrame{
             homestays = new ArrayList<>();
         } else {
             homestays = Read_Write_file1.readFile(PATH_HOMESTAY);
+        }
+    }
+
+    public ArrayList<CustomerOfHs_Date> checkFileCusOfHs_Date(String accHs) {
+        if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs)) == null) {
+            return new ArrayList<>();
+        } else {
+            return fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs));
         }
     }
 

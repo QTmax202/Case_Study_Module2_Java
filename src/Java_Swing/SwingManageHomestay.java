@@ -51,7 +51,7 @@ public class SwingManageHomestay extends JFrame{
     private static final IO_Read_Write_File<CustomerOfHs_Date> fileHomeDate = new IO_Read_Write_File<>();
     private static final ArrayList<Homestay> homestays = file_Homestay.readFile(PATH_HOMESTAY);
     private static ArrayList<Customer> customers;
-    private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
+//    private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
     private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates;
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
@@ -128,11 +128,11 @@ public class SwingManageHomestay extends JFrame{
         return true;
     }
 
-    public void checkFileHomeOfCus_Date(String accCus) {
+    public ArrayList<HomestayOfCus_Date> checkFileHomeOfCus_Date(String accCus) {
         if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
-            homeOfCus_Dates = new ArrayList<>();
+            return new ArrayList<>();
         } else {
-            homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", homestay.getAccHomestay()));
+            return fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
         }
     }
 
@@ -198,9 +198,8 @@ public class SwingManageHomestay extends JFrame{
             CustomerOfHs_Date customerOfHs = cusOfHome_Dates.get(CusOfHomesNumer);
             cusOfHome_Dates.remove(customerOfHs);
             fileHomeDate.writerFile(cusOfHome_Dates,String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
-            checkFileHomeOfCus_Date(customerOfHs.getCustomer().getAccount());
-            homeOfCus_Dates.removeIf((homeOfCus) -> (homeOfCus.getHomestayOfCus().equals(homestay)));
-            fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customerOfHs.getCustomer().getAccount()));
+            checkFileHomeOfCus_Date(customerOfHs.getCustomer().getAccount()).removeIf((homeOfCus) -> (homeOfCus.getHomestayOfCus().equals(homestay)));
+            fileCusDate.writerFile(checkFileHomeOfCus_Date(customerOfHs.getCustomer().getAccount()), String.format("file_Data/FileCus%sData", customerOfHs.getCustomer().getAccount()));
             refreshHomestayList();
         }
     }
