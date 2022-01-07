@@ -222,8 +222,7 @@ public class SwingManage extends JFrame {
         if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes)) != null) {
             labelCusOfHs.setText(String.format("Danh sách khách hàng của %s", nameHomes));
             listCustomerOfHsModel.removeAllElements();
-            ArrayList<CustomerOfHs_Date> cusOfHome_Dates = fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHomes));
-            for (CustomerOfHs_Date cusOfHs : cusOfHome_Dates) {
+            for (CustomerOfHs_Date cusOfHs : checkFileCusOfHs_Date(accHomes)) {
                 listCustomerOfHsModel.addElement(cusOfHs);
             }
         }
@@ -233,8 +232,7 @@ public class SwingManage extends JFrame {
         if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) != null) {
             labelHomesOfCus.setText(String.format("Danh sách homestay của %s", nameCus));
             listHomestayOfCusModel.removeAllElements();
-            ArrayList<HomestayOfCus_Date> homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
-            for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
+            for (HomestayOfCus_Date homeOfCus : checkFileHomeOfCus_Date(accCus)) {
                 listHomestayOfCusModel.addElement(homeOfCus);
             }
         }

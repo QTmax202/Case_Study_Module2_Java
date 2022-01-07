@@ -1,9 +1,10 @@
 package Product;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class CustomerOfHs_Date {
+public class CustomerOfHs_Date implements Serializable {
     private Customer customerOfHs;
     private LocalDate startDateOfHs;
     private LocalDate endDateOfHs;

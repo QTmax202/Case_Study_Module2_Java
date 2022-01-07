@@ -1,9 +1,10 @@
 package Product;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class HomestayOfCus_Date {
+public class HomestayOfCus_Date implements Serializable {
     private Homestay homestayOfCus;
     private LocalDate startDateOfCus;
     private LocalDate endDateOfCus;

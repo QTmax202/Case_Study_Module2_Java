@@ -114,6 +114,8 @@ public class SwingCustomer extends JFrame {
                     phoneNumberOfHomestay.setText(homeOfCus.getHomestayOfCus().getPhoneNumberHs());
                     addressOfHomestay.setText(String.format("%s, %s", homeOfCus.getHomestayOfCus().getAddress(), homeOfCus.getHomestayOfCus().getCountyAddress()));
                     highlightOfHomestay.setText(homeOfCus.getHomestayOfCus().getHighlight());
+                    textStartDate.setText(homeOfCus.getStartDateCusCus().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                    textEndDate.setText(homeOfCus.getEndDateOfCus().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                     deleteHomeOfMyButton.setEnabled(true);
                 } else {
                     deleteHomeOfMyButton.setEnabled(false);
@@ -126,10 +128,12 @@ public class SwingCustomer extends JFrame {
                 int homeNumer = listHomestayOfMy.getSelectedIndex();
                 if (homeNumer >= 0) {
                     HomestayOfCus_Date homeOfCus = homeOfCus_Dates.get(homeNumer);
+//                    checkFileCusOfHomes_Date(homeOfCus.getHomestayOfCus().getAccHomestay());
                     homeOfCus_Dates.remove(homeOfCus);
                     fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-                    checkFileCusOfHs_Date(homeOfCus.getHomestayOfCus().getNameHs()).removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
-                    fileHomeDate.writerFile(checkFileCusOfHs_Date(homeOfCus.getHomestayOfCus().getNameHs()), String.format("file_Data/FileHomes%sData", homeOfCus.getHomestayOfCus().getAccHomestay()));
+                    ArrayList<CustomerOfHs_Date> cusOfHome_Dates = checkFileCusOfHs_Date(homeOfCus.getHomestayOfCus().getAccHomestay());
+                    cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
+                    fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homeOfCus.getHomestayOfCus().getAccHomestay()));
                     listHomeOfCus();
                 }
             }
@@ -141,12 +145,14 @@ public class SwingCustomer extends JFrame {
                 if (homeNumer >= 0) {
                     Homestay homestay = homestays.get(homeNumer);
                     if (checkregistrationDate()) {
+                        ArrayList<CustomerOfHs_Date> cusOfHome_Dates = checkFileCusOfHs_Date(homestay.getAccHomestay());
                         for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
                             if (homeOfCus.getHomestayOfCus().getAccHomestay().equals(homestay.getAccHomestay())) {
                                 homeOfCus_Dates.remove(homeOfCus);
                                 fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-                                checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()).removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
-                                fileHomeDate.writerFile(checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()), String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
+//                                checkFileCusOfHomes_Date(homestay.getAccHomestay());
+                                cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
+                                fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
                             }
                         }
                         HomestayOfCus_Date homeOfCusNew = new HomestayOfCus_Date(
@@ -156,13 +162,14 @@ public class SwingCustomer extends JFrame {
                         );
                         homeOfCus_Dates.add(homeOfCusNew);
                         fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
+//                        checkFileCusOfHomes_Date(homestay.getAccHomestay());
                         CustomerOfHs_Date cusOfHomeNew = new CustomerOfHs_Date(
                                 customer,
                                 textStartDate.getText(),
                                 textEndDate.getText(),
                                 LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()).add(cusOfHomeNew);
-                        fileHomeDate.writerFile(checkFileCusOfHs_Date(homestays.get(homeNumer).getAccHomestay()), String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
+                        cusOfHome_Dates.add(cusOfHomeNew);
+                        fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
                         LabelRegistration.setText("Đăng ký thành công!");
                         listHomeOfCus();
                     } else {
@@ -245,6 +252,7 @@ public class SwingCustomer extends JFrame {
     }
 
     public void listHomeOfCus() {
+        checkFileHomeOfCus_Date();
         listHomestayOfCusModel.removeAllElements();
         for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
             listHomestayOfCusModel.addElement(homeOfCus);
@@ -259,6 +267,14 @@ public class SwingCustomer extends JFrame {
         }
     }
 
+//    public void checkFileCusOfHomes_Date(String accHs) {
+//        if (fileCusDate.readFile(String.format("file_Data/FileFileHomes%sData", accHs)) == null) {
+//            homeOfCus_Dates = new ArrayList<>();
+//        } else {
+//            homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileHomes%sData", accHs));
+//        }
+//    }
+
     public ArrayList<CustomerOfHs_Date> checkFileCusOfHs_Date(String accHs) {
         if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs)) == null) {
             return new ArrayList<>();
@@ -267,13 +283,13 @@ public class SwingCustomer extends JFrame {
         }
     }
 
-    public ArrayList<HomestayOfCus_Date> checkFileHomeOfCus_Date(String accCus) {
-        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
-            return new ArrayList<>();
-        } else {
-            return fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
-        }
-    }
+//    public ArrayList<HomestayOfCus_Date> checkFileHomeOfCus_Date(String accCus) {
+//        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
+//            return new ArrayList<>();
+//        } else {
+//            return fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
+//        }
+//    }
 
     public void checkFileHomes(){
         if (file_Homestay.readFile(PATH_HOMESTAY) == null) {

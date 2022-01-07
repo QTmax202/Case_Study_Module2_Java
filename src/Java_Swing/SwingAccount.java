@@ -101,8 +101,8 @@ public class SwingAccount extends JFrame{
             if (customer.getAccount().equals(textAccount.getText()) && customer.getPassword().equals(textPassword.getText())){
                 swingCustomer.setVisible(true);
                 SwingCustomer.customer = customer;
-                swingCustomer.checkFileHomes();
                 swingCustomer.checkFileHomeOfCus_Date();
+                swingCustomer.checkFileHomes();
                 swingCustomer.startSwing();
                 swingCustomer.refreshHomestayList();
                 swingCustomer.listHomeOfCus();
@@ -114,9 +114,12 @@ public class SwingAccount extends JFrame{
             if (homestay.getAccHomestay().equals(textAccount.getText()) && homestay.getPassHomestay().equals(textPassword.getText())){
                 swingManageHomestay.setVisible(true);
                 swingManageHomestay.homestay = homestay;
-                swingManageHomestay.checkFileCusOfHs_Date();
+//                swingManageHomestay.checkFileCusOfHomes_Date();
+                swingManageHomestay.checkFileCusOfHomes_Date();
                 swingManageHomestay.checkFileCustomer();
-                swingManageHomestay.refreshHomestayList();
+                swingManageHomestay.checkFileHs();
+                swingManageHomestay.cusOfHomesList();
+//                swingManageHomestay.refreshHomestayList();
                 swingManageHomestay.startSwing();
                 swingAccount.setVisible(false);
                 return true;
