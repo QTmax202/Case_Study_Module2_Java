@@ -69,7 +69,7 @@ public class SwingManage extends JFrame {
     SwingManage() {
         super("Homestay");
         this.setContentPane(this.swingManage);
-        this.setPreferredSize(new Dimension(1760, 680));
+        this.setPreferredSize(new Dimension(1820, 680));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
         saveHs.setEnabled(false);

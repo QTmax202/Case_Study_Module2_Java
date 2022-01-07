@@ -50,7 +50,7 @@ public class SwingCustomer extends JFrame {
     private static final IO_Read_Write_File<CustomerOfHs_Date> fileHomeDate = new IO_Read_Write_File<>();
     private static final ArrayList<Customer> customers = file_Customer.readFile(PATH_CUSTOMER);
     private static ArrayList<Homestay> homestays ;
-    private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
+//    private static ArrayList<HomestayOfCus_Date> homeOfCus_Dates;
 //    private static ArrayList<CustomerOfHs_Date> cusOfHome_Dates;
     private static final AccountPasswordExample accountPasswordExample = new AccountPasswordExample();
     private static final PhoneNumberExample phoneNumberExample = new PhoneNumberExample();
@@ -59,7 +59,7 @@ public class SwingCustomer extends JFrame {
 
     SwingCustomer() {
         super("Homestay");
-        this.setPreferredSize(new Dimension(1460, 680));
+        this.setPreferredSize(new Dimension(1680, 680));
         this.setContentPane(this.swingCustomer);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
@@ -108,6 +108,7 @@ public class SwingCustomer extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 int homeNumer = listHomestayOfMy.getSelectedIndex();
                 if (homeNumer >= 0) {
+                    ArrayList<HomestayOfCus_Date> homeOfCus_Dates = checkFileHomeOfCus_Date(customer.getAccount());
                     HomestayOfCus_Date homeOfCus = homeOfCus_Dates.get(homeNumer);
                     nameOfHomestay.setText(homeOfCus.getHomestayOfCus().getNameHs());
                     priceOfHomestay.setText(String.valueOf(homeOfCus.getHomestayOfCus().getPriceHs()));
@@ -127,8 +128,8 @@ public class SwingCustomer extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int homeNumer = listHomestayOfMy.getSelectedIndex();
                 if (homeNumer >= 0) {
+                    ArrayList<HomestayOfCus_Date> homeOfCus_Dates = checkFileHomeOfCus_Date(customer.getAccount());
                     HomestayOfCus_Date homeOfCus = homeOfCus_Dates.get(homeNumer);
-//                    checkFileCusOfHomes_Date(homeOfCus.getHomestayOfCus().getAccHomestay());
                     homeOfCus_Dates.remove(homeOfCus);
                     fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
                     ArrayList<CustomerOfHs_Date> cusOfHome_Dates = checkFileCusOfHs_Date(homeOfCus.getHomestayOfCus().getAccHomestay());
@@ -145,33 +146,37 @@ public class SwingCustomer extends JFrame {
                 if (homeNumer >= 0) {
                     Homestay homestay = homestays.get(homeNumer);
                     if (checkregistrationDate()) {
+                        ArrayList<HomestayOfCus_Date> homeOfCus_Dates = checkFileHomeOfCus_Date(customer.getAccount());
                         ArrayList<CustomerOfHs_Date> cusOfHome_Dates = checkFileCusOfHs_Date(homestay.getAccHomestay());
-                        for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
-                            if (homeOfCus.getHomestayOfCus().getAccHomestay().equals(homestay.getAccHomestay())) {
-                                homeOfCus_Dates.remove(homeOfCus);
-                                fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-//                                checkFileCusOfHomes_Date(homestay.getAccHomestay());
-                                cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
-                                fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
+                        try {
+                            for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
+                                if (homeOfCus.getHomestayOfCus().getAccHomestay().equals(homestay.getAccHomestay())) {
+                                    homeOfCus_Dates.remove(homeOfCus);
+                                    fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
+                                    cusOfHome_Dates.removeIf((cusOfHome_Date) -> (cusOfHome_Date.getCustomer().getAccount().equals(customer.getAccount())));
+                                    fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
+                                }
                             }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        } finally {
+                            HomestayOfCus_Date homeOfCusNew = new HomestayOfCus_Date(
+                                    homestay,
+                                    textStartDate.getText(),
+                                    textEndDate.getText()
+                            );
+                            homeOfCus_Dates.add(homeOfCusNew);
+                            fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
+                            CustomerOfHs_Date cusOfHomeNew = new CustomerOfHs_Date(
+                                    customer,
+                                    textStartDate.getText(),
+                                    textEndDate.getText(),
+                                    LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                            cusOfHome_Dates.add(cusOfHomeNew);
+                            fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
+                            LabelRegistration.setText("Đăng ký thành công!");
+                            listHomeOfCus();
                         }
-                        HomestayOfCus_Date homeOfCusNew = new HomestayOfCus_Date(
-                                homestay,
-                                textStartDate.getText(),
-                                textEndDate.getText()
-                        );
-                        homeOfCus_Dates.add(homeOfCusNew);
-                        fileCusDate.writerFile(homeOfCus_Dates, String.format("file_Data/FileCus%sData", customer.getAccount()));
-//                        checkFileCusOfHomes_Date(homestay.getAccHomestay());
-                        CustomerOfHs_Date cusOfHomeNew = new CustomerOfHs_Date(
-                                customer,
-                                textStartDate.getText(),
-                                textEndDate.getText(),
-                                LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                        cusOfHome_Dates.add(cusOfHomeNew);
-                        fileHomeDate.writerFile(cusOfHome_Dates, String.format("file_Data/FileHomes%sData", homestay.getAccHomestay()));
-                        LabelRegistration.setText("Đăng ký thành công!");
-                        listHomeOfCus();
                     } else {
                         LabelRegistration.setText("Đăng ký không thành công!");
                     }
@@ -252,28 +257,27 @@ public class SwingCustomer extends JFrame {
     }
 
     public void listHomeOfCus() {
-        checkFileHomeOfCus_Date();
         listHomestayOfCusModel.removeAllElements();
-        for (HomestayOfCus_Date homeOfCus : homeOfCus_Dates) {
+        for (HomestayOfCus_Date homeOfCus : checkFileHomeOfCus_Date(customer.getAccount())) {
             listHomestayOfCusModel.addElement(homeOfCus);
         }
     }
 
-    public void checkFileHomeOfCus_Date() {
-        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", customer.getName())) == null) {
-            homeOfCus_Dates = new ArrayList<>();
-        } else {
-            homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", customer.getName()));
-        }
-    }
-
-//    public void checkFileCusOfHomes_Date(String accHs) {
-//        if (fileCusDate.readFile(String.format("file_Data/FileFileHomes%sData", accHs)) == null) {
+//    public void checkFileHomeOfCus_Date() {
+//        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", customer.getName())) == null) {
 //            homeOfCus_Dates = new ArrayList<>();
 //        } else {
-//            homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileHomes%sData", accHs));
+//            homeOfCus_Dates = fileCusDate.readFile(String.format("file_Data/FileCus%sData", customer.getName()));
 //        }
 //    }
+
+    public ArrayList<HomestayOfCus_Date> checkFileHomeOfCus_Date(String accCus) {
+        if (fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus)) == null) {
+            return new ArrayList<>();
+        } else {
+            return fileCusDate.readFile(String.format("file_Data/FileCus%sData", accCus));
+        }
+    }
 
     public ArrayList<CustomerOfHs_Date> checkFileCusOfHs_Date(String accHs) {
         if (fileHomeDate.readFile(String.format("file_Data/FileHomes%sData", accHs)) == null) {

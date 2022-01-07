@@ -101,7 +101,7 @@ public class SwingAccount extends JFrame{
             if (customer.getAccount().equals(textAccount.getText()) && customer.getPassword().equals(textPassword.getText())){
                 swingCustomer.setVisible(true);
                 SwingCustomer.customer = customer;
-                swingCustomer.checkFileHomeOfCus_Date();
+//                swingCustomer.checkFileHomeOfCus_Date();
                 swingCustomer.checkFileHomes();
                 swingCustomer.startSwing();
                 swingCustomer.refreshHomestayList();
